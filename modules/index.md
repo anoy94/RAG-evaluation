@@ -1,154 +1,108 @@
 # RAG 测评框架 v2：工程详细设计索引
 
-- 设计标识：rag-evaluation-v2
-- 项目根目录：C:\Users\32943\Desktop\RAG-evaluation
-- 设计包目录：modules/
-- 模式：新建设计包
-- 设计包修订：r021
-- 本索引审阅状态：Confirmed
-- 本索引内容修订：r021
-- 单元修订：C2 行为/依赖与就绪基线保持 r020；本次 C1 设计及共享导航 r021。
+- 设计标识：rag-evaluation-v2；根目录：C:/Users/32943/Desktop/RAG-evaluation。
+- 设计包：modules/；模式：续建设计包；包/索引修订：r022。
+- 索引状态：Confirmed。
+- 单元修订独立：C1/C2 业务与计划验收保持原值；本轮新增 C3/r001 及共享导航。
 
-本索引确认设计包规划。各架构文档、模块契约及详细设计的确认状态单独记录。
-2026-11-10 用户授权代理连续完成数据集生成模块包，仅在实质方案分歧或
-缺少必要外部输入时询问；本轮 Confirmed 表示在该委托下完成设计与校验，
-不声称逐节人工复审，也不代表实现或实际验收通过。
+2026-11-10 用户明确授权连续完成 Diagnostics 模块包及相关设计写入，
+只在实质方案分歧或必要外部材料缺失时询问。
+本轮 Confirmed 表示在该委托下完成设计与校验，不声称逐节人工复审。
+设计就绪不等于代码、应用测试或真实业务验收通过。
 
 ## 1. 设计依据与范围
 
-主要依据：
-[全链路 RAG 测评设计 v2](../doc/RAG测评设计_v2.md)。
+行为基线为 [RAG 测评设计 v2](../doc/RAG测评设计_v2.md)，
+补充输入为 [数据集生成详设](../doc/RAG测评设计_v2_数据集生成详细设计.md)。
+用户已选 C2 优先实施，C1 生成向 C2 对齐；Diagnostics 设计现在完成，
+实际实施安排在数据和基础评分闭环之后。
 
-补充输入：
-[数据集生成详细设计](../doc/RAG测评设计_v2_数据集生成详细设计.md)。
+核心约束：
+Python 3.11+、单包/CLI、不可变产物；
+gold 绑定源 revision 且不随系统 chunk 改动；
+普通系统输入不含参考答案/审定/评分；
+实际上下文与候选分离；
+缺失、未知、测量故障和真实失败分开；
+报告保留覆盖与三态门禁；
+干预只产生范围受限的结论。
 
-v2 是本轮行为与边界的基线。已有数据集详设用于提取细节、核对一致性，
-其内容进入本设计包时仍需按对应单元审阅。发现冲突时记录并提请决策。
-
-设计覆盖 v2 的全部逻辑模块，推进顺序为：
-总体架构 → 工程目录与依赖规则 → 横切规则 → 选定近期范围
-→ 提供方契约 → 模块细节 → 集成流程 → 验收映射与交接。
-
-基线包括：
-- Python 3.11+、单包与 CLI、类型化校验及可审计文件产物。
-- 黄金证据绑定源文 revision，与待测系统 chunk 身份解耦。
-- 常规系统输入与参考答案、黄金证据、裁判结果隔离。
-- 实际生成上下文与检索结果分别记录。
-- 不可测、不确定、真实失败分别表达。
-- 数据、运行、评分及对照具有独立版本和来源记录。
-- 报告与门禁保留有效覆盖、缺失原因和三态结论。
+本包覆盖所有顶层模块的当前声明范围；
+复杂原格式/视觉评分、在线模型裁判、通用回放、概率校准、
+自动修复及服务化等远期扩展仍有明确延期。
+不能用顶层 Complete 声称所有 v2 远期能力或代码已完成。
 
 ## 2. 状态与实施权限
 
-审阅状态：
-- Pending：已规划，尚无批准正文。
-- In Progress：自身范围内部分内容已确认，其余待确认。
-- Confirmed：自身声明范围已确认且没有阻塞决策。
-- Needs Review：已有内容因依赖或假设变化需要重新审阅。
-- Superseded：已被替代或退役。
+审阅状态：Pending=未设计正文；In Progress=自身部分完成；
+Confirmed=自身声明范围当前有效；Needs Review=依赖/假设变化需重审；
+Superseded=已替代。
+详设覆盖独立为 Not Started/Partial/Complete。
+候选状态独立为 Design pending/Ready for OpenSpec/Needs Review/Superseded。
+每份交接生命周期为 Current/Needs Review/Superseded。
 
-详设覆盖单独记录为 Not Started、Partial、Complete。
-父级概述确认不代表子级细节确认；设计完成不代表代码完成。
+包修订递增不自动使无关候选失效；以消费的确切单元修订和假设判断。
+新快照保留旧批准正文，只更新旧快照生命周期及后继链接。
+当前无绑定 OpenSpec 消费方；本轮不创建提案、tasks 或应用代码。
 
-候选就绪状态：
-Design pending、Ready for OpenSpec、Needs Review、Superseded。
-只有候选范围内全部必需设计通过检查，才可进入 Ready for OpenSpec。
-
-公开接口、数据含义与归属、依赖方向、持久化契约、权限规则、
-关键状态机及验收行为的变更需要确认。
-实现者可在已确认边界内决定私有辅助函数、内部组织与契约保持的重构。
+公开接口、数据含义与归属、依赖方向、持久化、权限、
+关键状态机和验收行为变更须设计确认；
+私有辅助组织和保持契约的重构由实施者决定。
+用户本轮免逐步确认适用于当前设计交付，不是未来随意改契约许可。
 
 ## 3. 文档层级与模块计划
 
 ### 3.1 项目级文档
 
-| 设计单元 | 计划路径 | 审阅状态 | 内容修订 |
+| 单元 | 文档修订 | 内容边界 |
+|---|---|---|
+| [总体架构](00-system-architecture.md) | r002 | 第 1–9 节规则正文 r001，进度 r002 |
+| [工程目录/依赖](01-directory-layout.md) | r002 | 第 1–7 节规则正文 r001，进度 r002 |
+| [横切规则](02-cross-cutting-concerns.md) | r002 | 第 1–10 节规则正文 r001，进度 r002 |
+| [需求验收映射](99-requirement-traceability.md) | r004 | C2 R01–R32/r001；C1 D01–D26/r001；C3 I01–I24/r001；进度/导航独立 |
+
+以上状态均 Confirmed。三份项目级设计本轮无需改变。
+详细修订/稳定部分以当前交接为准，不能只按文档整体修订推断业务变化。
+
+### 3.2 模块、契约及详设
+
+每个模块的公共契约由提供方拥有；主 README 的 Contracts 是核心唯一正文。
+新 profile 的唯一正文可位于该提供方的独立主题文件，不在消费者重复定义。
+
+| 模块及主文档 | 文档修订 | 当前核心契约及范围 | 审阅 / 详设 |
 |---|---|---|---|
-| 总体架构 | [00-system-architecture.md](00-system-architecture.md) | Confirmed | r002 |
-| 工程目录与依赖规则 | [01-directory-layout.md](01-directory-layout.md) | Confirmed | r002 |
-| 横切规则 | [02-cross-cutting-concerns.md](02-cross-cutting-concerns.md) | Confirmed | r002 |
-| 需求与验收映射 | [99-requirement-traceability.md](99-requirement-traceability.md) | Confirmed（C1、C2 声明范围） | r003 |
+| [artifact-store](modules/artifact-store/README.md#contracts) | r004 | r002；本地字节/资产/授权/提交 | Confirmed / Complete |
+| [review](modules/review/README.md#contracts) | r001 | r001；文件审定记录/绑定，完整队列延期 | Confirmed / Complete |
+| [dataset-registry](modules/dataset-registry/README.md#contracts) | r004 | r002；核心对象/导入/审定衔接/正式版本发布 | Confirmed / Complete |
+| [dataset-builder](modules/dataset-builder/README.md#contracts) | r001 | r001；生成/独立求解/质检/发布投影，五主题 r001 | Confirmed / Complete |
+| [adapters](modules/adapters/README.md#contracts) | r003 | 核心 r001；C2 JSONL 导入；C3 独立扩展 r001 | Confirmed / Complete |
+| [evidence-mapper](modules/evidence-mapper/README.md#contracts) | r003 | 核心 r001；保守文本定位；C3 独立扩展 r001 | Confirmed / Complete |
+| [evaluators](modules/evaluators/README.md#contracts) | r003 | r001；确定规则/已有评分导入/事实与任务组合 | Confirmed / Complete |
+| [metric-planner](modules/metric-planner/README.md#contracts) | r003 | r001；C2 离线依赖与完整槽位 | Confirmed / Complete |
+| [diagnostics](modules/diagnostics/README.md#contracts) | r001 | r001；证据诊断/竞争假设/干预规划/受限解释 | Confirmed / Complete |
+| [runner](modules/runner/README.md#contracts) | r004 | 核心 r002；C2 本地评分；C3 独立扩展 r001 | Confirmed / Complete |
+| [reporting](modules/reporting/README.md#contracts) | r004 | 核心总体 r002；C1–C12/r001、C13–C18/r002；C3 扩展 r001 | Confirmed / Complete |
 
-本表为文档修订；三份项目级设计正文保持 r001，
-本次 r002 仅同步进度说明。C2 映射单元保持 r001、C2 交接进度 r003；
-需求映射文档 r003 新增 C1 第 6–7 节 r001。
-C2 各实现单元及契约修订以[交接 C2-H002](handoffs/c2-r002.md)为准。
+八份原模块 README 本轮仅更新导航、进度及新主题入口；
+核心业务/契约/验收修订保持原值，Review/Builder 文件未改。
+声明 Complete 均限各自范围，不表示实现、数据质量或所有远期插件已经交付。
 
-总体架构先确认运行边界、模块职责、数据所有权、主要流程及依赖方向。
-目录设计随后确定逻辑模块到代码包的映射。
-横切规则统一权限、错误、版本、重试、幂等、恢复、审计与测试要求。
+Diagnostics 五文件为主 README、
+[观察规则](modules/diagnostics/observations.md)、
+[干预协议](modules/diagnostics/interventions.md)、
+[结果解释](modules/diagnostics/interpretation.md)、
+[运行产物/安全](modules/diagnostics/operations.md)，均 Confirmed/r001。
 
-### 3.2 模块及契约归属规划
-
-以下是包含层级。模块间依赖另见第 4 节。
-每个模块主文档预留稳定的 Contracts 标题，作为公开契约的唯一正文位置。
-消费者链接提供方定义及修订，不复制定义。
-
-| 模块 ID 与职责 | 主文档及契约位置 | 核心契约归属（状态见主文档） | 审阅 / 覆盖 |
-|---|---|---|---|
-| artifact-store：不可变产物、内容寻址与谱系 | [modules/artifact-store/README.md](modules/artifact-store/README.md#contracts) | ArtifactRef、SourceArtifact、产物读写协议 | Confirmed / Complete |
-| review：复核工作项与审定记录 | [modules/review/README.md](modules/review/README.md#contracts) | ReviewRecord、版本绑定与批次导入；ReviewItem 后续设计 | Confirmed / Complete |
-| dataset-registry：数据与证据版本发布 | [modules/dataset-registry/README.md](modules/dataset-registry/README.md#contracts) | 核心对象、DatasetVersion、导入、审定衔接与发布协议 | Confirmed / Complete |
-| dataset-builder：候选构建与质量验证 | [modules/dataset-builder/README.md](modules/dataset-builder/README.md#contracts) | BuildConfig、源/参考、Blueprint/Scenario、候选/独立解、验证、构建作业与发布投影 | Confirmed / Complete |
-| adapters：系统能力与运行接入 | [modules/adapters/README.md](modules/adapters/README.md#contracts) | 标准运行、阶段与生成产物、计量及 JSONL 导入协议 | Confirmed / Complete |
-| evidence-mapper：跨阶段证据定位 | [modules/evidence-mapper/README.md](modules/evidence-mapper/README.md#contracts) | 文本锚点、来源、联合覆盖及严格缺失判定 | Confirmed / Complete |
-| evaluators：评分行为与裁判版本 | [modules/evaluators/README.md](modules/evaluators/README.md#contracts) | MetricSpec、Judgment、评分导入与 Evaluator 协议 | Confirmed / Complete |
-| metric-planner：依赖与适用性解析 | [modules/metric-planner/README.md](modules/metric-planner/README.md#contracts) | EvaluationPlan、依赖检查与执行任务描述 | Confirmed / Complete |
-| diagnostics：症状、假设与受控干预 | [modules/diagnostics/README.md](modules/diagnostics/README.md#contracts) | DiagnosticFinding、Intervention、Oracle 协议 | Pending / Not Started |
-| runner：实验执行、导入与恢复 | [modules/runner/README.md](modules/runner/README.md#contracts) | ExperimentManifest、实验作业与执行控制协议 | Confirmed / Complete |
-| reporting：统计、报告与门禁 | [modules/reporting/README.md](modules/reporting/README.md#contracts) | AnalysisResult、ComparisonReport、GatePolicy、GateDecision | Confirmed / Complete |
-
-artifact-store 的 C2 本地范围已确认，文档修订 r003，
-公开契约 r002。
-review 的 C2 最小审定记录范围已确认，文档与契约修订 r001；
-完整队列和 ReviewItem 仍在后续范围。
-dataset-registry 的 C2 范围已确认，文档 r003、公开契约 r002；
-覆盖导入、审定衔接、版本发布、读取与恢复。
-adapters 的 C2 本地导入范围已确认，文档 r002、公开契约 r001；
-在线执行、实时采集及 Oracle 接入仍在后续范围。
-evidence-mapper 的 C2 文本范围已确认，文档 r002、契约 r001；
-事实支持计分归 Evaluator，语义改写和视觉映射留在后续范围。
-evaluators 的 C2 确定性评价与已有审定评分范围已确认，
-文档 r002、契约 r001；覆盖逐项指标、评分视图、审定导入、
-事实覆盖及 TaskSuccess 组合。
-在线裁判、自动主张提取、传统 IR 投影和专项评价留在后续范围。
-metric-planner 的 C2 离线计划范围已确认，文档 r002、契约 r001；
-覆盖固定观测、结果槽位、指标依赖、输入缺口和确定性计划。
-计划保存与执行归 Runner，在线计划和动态工作流留在后续范围。
-runner 的 C2 本地范围已确认，文档 r003、契约 r002；
-覆盖实验准备、评价执行、预算与失败控制、
-有限重试、显式评分复用和本地进程恢复。
-每个操作采用一个协调者和一个在途 worker；
-在线调用、多 worker 并行及分布式调度留在后续范围。
-reporting 的 C2 聚合、覆盖、配对统计、Markdown/JSON 报告、
-样例、三态门禁与本地导出范围已确认，文档 r003、契约 r002；
-C1–C12 保持 r001，新增 C13–C18 为 r002。
-自动校准、完整诊断、总体尾分位数与跨来源成本仍在后续范围。
-上述八个模块本次只同步进度摘要；业务设计、公开契约和已确认单元修订保持原值。
-review 文档与契约保持 r001。
-dataset-builder 文档、公开契约及五份主题详设均为 r001，
-覆盖 C1 声明的生成、独立求解、质检、文件审定与 Registry 发布。
-复杂原格式工具具体接入、更多 C2 评分 profile 等边界见模块与交接；
-diagnostics 仍为 Pending / Not Started，其内容修订为“—”。
-Complete 表示该模块声明范围的设计覆盖，不表示实现完成。
-公开字段、方法和状态转换在各自设计中确认；
-本表汇总总体架构确认的所有权。
-
-较大模块按以下主题分批审阅：
-- dataset-builder：已按 README 总契约及 evidence.md、planning.md、synthesis.md、
-  quality-release.md、execution.md 五份主题完成；局部进度以主文档为准。
-- runner：计划与执行、预算及失败处理、缓存与恢复。
-- reporting：聚合与配对统计、报告解释、门禁规则。
-
-常规模块以 README 承载正文和本地进度。
-Builder 按当前用户授权拆为五个主题，各主题与主契约共同组成完整模块包，
-不代表新增五个服务或独立公共模块。其他模块的拆分仍按对应计划处理。
+C3 提供方扩展：
+[Adapter 文本生成/阶段观察](modules/adapters/diagnostic-extension.md#contracts)、
+[Mapper 诊断阶段范围](modules/evidence-mapper/diagnostic-stages.md#contracts)、
+[Runner 配对试验](modules/runner/diagnostic-experiments.md#contracts)、
+[Reporting 诊断报告](modules/reporting/diagnostic-reporting.md#contracts)，
+均 Confirmed/Complete/r001；不进入 C1/C2 的必需实施集合。
 
 ## 4. 依赖方向规划
 
-依赖方向已由[总体架构第 4 节](00-system-architecture.md#4-依赖方向)确认；
-下表为消费者使用提供方契约的摘要。
-它不是运行调用时序，也不表示候选必须实现全部依赖模块。
+依赖采用消费者→提供方，规则正文见 [架构第 4 节](00-system-architecture.md#4-依赖方向)。
+模块包含层级不是依赖图；跨模块只使用 contracts/api。
 
 | 消费者 | 提供方 |
 |---|---|
@@ -164,168 +118,100 @@ Builder 按当前用户授权拆为五个主题，各主题与主契约共同组
 | runner | artifact-store、review、dataset-registry、adapters、evidence-mapper、evaluators、metric-planner、diagnostics |
 | reporting | artifact-store、dataset-registry、runner、evaluators、diagnostics |
 
-依赖中的契约位置统一指向第 3.2 节对应提供方的 Contracts 标题。
-CLI 作为组合入口调用业务模块，业务模块不反向依赖 CLI。
-
-架构设计需区分契约引用、运行调用和存储访问。
-运行控制与记录类型分离：adapters 拥有标准运行记录，
-runner 拥有实验调度与作业状态，避免双方互相依赖。
-
-ReviewItem 的目标使用类型与 revision 引用标识；
-review 不通过反向导入各业务模块来修改被审对象。
-审定结果由对象所有者校验并应用到新版本。
+CLI 作为组合根投影 DTO，不被业务模块反向依赖。
+Run/Span/GenerationCall 归 Adapter；作业/调度归 Runner；
+Judgment 归 Evaluator；诊断/计划/效果解释归 Diagnostics；
+统计/报告/gate 归 Reporting；正式 gold 归 Registry；ReviewRecord 归 Review。
+Diagnostics 禁止导入 Runner/Reporting/Review/Builder/Planner，含类型导入。
+C3 无新增依赖边，也不使 C2 必须注入 Diagnostics。
 
 ## 5. 候选推进范围
 
-C2 优先设计已完成；2026-11-10 用户要求继续完成数据集生成模块包。
-当前完成 C1 生成侧设计，并对齐 C2 已确认的提供方契约。
-C1、C2 均为 Ready for OpenSpec，分别绑定 C1-H001 与 C2-H002。
-就绪表示设计充分，不表示应用代码或真实数据/模型验收完成。
+### C2：优先实施的离线评测闭环
 
-### C1：数据集生成、审定与正式发布，本轮选定
+结果：已有正式数据、A/B Run、有效标注 → 离线评分/覆盖/配对统计/
+Markdown、JSON 报告与 pass/fail/inconclusive gate。
 
-原候选的已审定材料整理是 curated_import 子模式；
-本轮用户要求将设计扩展为从固定源材料到正式数据集的完整生成侧模块包。
+Implement：Store、最小 Review、Registry、Adapter JSONL、
+文本 Mapper、确定规则/已有审定 Evaluator、Planner、
+C2 Runner 及 Reporting、CLI/本地恢复与 E01–E24。
+无已验证应用实现；若后来出现代码，必须核验同契约和真实测试才 Reuse。
+Defer：Builder 生成、在线调用/裁判、Oracle/Diagnostics、
+完整审定平台、视觉、Web/分布式与远程存储。
+缺标签/上下文不补造分数；fixture 不证明真实质量；业务阈值需实际输入。
+契约和验收基线与此前相同，不因 C3 设计暗增能力。
 
-结果：
-冻结源与参考表示 → 事实/证据 → 蓝图与分组采样 →
-合成与独立求解 → 质检/文件审定 →
-正式 DatasetVersionRef、质量/覆盖/成本摘要及 C2 兼容报告。
+[C2 切片](slices/c2-offline-evaluation.md)文档 r005，
+第 1–6 节业务/验收 r001，第 7 节进度 r005。
+Ready for OpenSpec；当前 [C2-H003](handoffs/c2-r003.md)，包 r022。
 
-Implement：
-- Builder 主契约及 evidence、planning、synthesis、quality-release、
-  execution 五份主题所声明的行为。
-- utf8_text_v1、reference_extraction_jsonl_v1 接缝；
-  recorded_model_response_v1 与 chat_completions_json_v1 的受控模型调用。
-- Store/Review/Registry 既有公开契约必需本地行为，
-  新增 C1 CLI、真实本地集成及 G01–G32 验收。
-- 明确处理未知负例、配额不可达、缺审定、外部未决及发布后回执失败。
+### C1：完整数据集生成、审定与正式发布
 
-Reuse：
-目前没有已验证的项目业务实现。
-若 C2 先实施提供方，应先读实际代码/测试、核验原契约，再兼容复用。
-第三方工具版本实施时锁定，不能把设计文档当成现成代码。
+结果：固定源/参考 → 事实/蓝图/分组采样 → 合成/独立求解 →
+质检/文件审定 → 正式 DatasetVersion 和 C2 兼容报告。
+curated_import 为其中离线子模式。
 
-Defer：
-原格式全栈 parser/OCR/视觉服务具体接入、embedding 服务、
-动态工具、Web 审定/分派、签名身份、远端存储与分布式调度。
-更多数值/视觉评价 profile 保留独立扩展；C2 当前规则和指标不被暗改。
+Implement：Builder 主契约及五主题；utf8_text_v1、
+reference_extraction_jsonl_v1、recorded_model_response_v1、
+chat_completions_json_v1；Store/Review/Registry 必要本地行为；
+C1 CLI/G01–G32。
+Reuse：C2 若先实施提供方，先核验代码/测试，不把设计算现成实现。
+Defer：全格式 parser/OCR/视觉具体接入、embedding、动态工具、
+Web 审定/身份签名、远程/分布式；更多 C2 数值/视觉 profile 单列扩展。
+Builder 可验证乘除/比例，C2 NumericRule 仍只 identity/add/subtract；
+无法无损投影则 blocked。人工核心、自动扩展和 replay 来源分开，
+不泄漏权限题隐藏答案，不用抽检代替逐题核心审定。
 
-兼容边界：
-- 内部可验证乘除/比例推导，正式 C2 NumericRule 仍仅 identity/add/subtract；
-  无损投影失败则 blocked，不删规则假装可测。
-- 图表/扫描资产与 external 定位可保存，C2 文本 Mapper 不因此具备视觉评分。
-- 自动验证和人工核心分开；只有真实 Registry 目标和逐题审定满足等级要求。
-- replay/合成夹具只验证协议，不证明真实人工、模型质量或生产发布资格。
-- 不向无权用户/模型暴露权限题隐藏答案。
+[Builder 包](modules/dataset-builder/README.md)六文件均 r001；
+[C1 切片](slices/c1-dataset-generation.md)文档 r002，
+第 1–6 节业务/验收 r001、第 7 节进度 r002。
+Ready for OpenSpec；当前 [C1-H002](handoffs/c1-r002.md)，包 r022。
 
-必要设计：
-[Builder 模块包](modules/dataset-builder/README.md)、
-[C1 CLI 与集成切片](slices/c1-dataset-generation.md) r001、
-[需求映射第 6–7 节](99-requirement-traceability.md#6-c1-数据集生成需求映射) r001，
-加项目级规则与 Store/Review/Registry 的确切契约。
+### C3：证据诊断、严格文本 Oracle 与干预报告
 
-当前状态：
-Ready for OpenSpec；[C1-H001](handoffs/c1-r001.md)为 Current，绑定包 r021。
-没有真实业务数据、模型/人工接入或应用验收证据；
-它们在运行前作为必要输入核验，不在设计中补造。
+结果：全预期离线观测 → 症状/观察/竞争假设 →
+固定抽样/资格/干预计划 → 可选新配对文本生成 →
+同口径评分/协议检查/受限结论 → 诊断报告。
 
-### C2：导入运行记录后的离线评测闭环，原优先候选
+Implement：Diagnostics 五文件、四提供方独立扩展、
+[C3 CLI/集成/T01–T32](slices/c3-diagnostics.md)及 I01–I24 映射，均 r001。
+依赖按实际代码证据兼容复用或实施必需核心，
+不要求 Builder 或完整人工平台。
+在线只执行 strict_context_oracle 的单次最终文本生成，
+固定模板/模型/采样/工具/权限/预算，仅替换审定源 context；
+无条件则 blocked，不自动改模型或截断证据。
+外部结果可导入，但缺协议材料为 unverified。
+新响应缺评分来源则效果 unknown，不隐式启动裁判。
 
-结果：
-从已有数据集、A/B 运行记录和可用标注出发，
-形成 Markdown 报告和 JSON 结果，包括配对差异、
-失败样例、指标覆盖、缺失原因及 pass/fail/inconclusive 门禁。
+Defer：其他干预的在线通用执行、多模态/工具链、诊断 LLM/概率、
+自动修复、干预 CI/gate、分布式。fail→pass 不证明检索唯一根因。
+Ready for OpenSpec；当前 [C3-H001](handoffs/c3-r001.md)，包 r022。
+建议在 C1/C2 基础闭环实测后实施，不改变 C2 快速展示的优先级。
 
-Implement：
-- artifact-store：本地不可变产物、引用、授权与完整性校验。
-- review：已有审定记录的契约、校验读取及 revision 绑定。
-- dataset-registry：已有数据导入、版本冻结、引用与 split 校验；
-  不要求先完成数据生成或完整审定平台。
-- adapters：标准记录和一种明确映射配置下的 import_run。
-- evidence-mapper：文本 quote 定位、范围和不确定状态。
-- evaluators：确定规则及已有审定判断导入；
-  自由文本主张判断缺少有效评分来源时保留不可测状态。
-- metric-planner：适用性、依赖与可计算性解析。
-- runner：计划、导入、评分、attempt、缓存与恢复。
-- reporting：配对统计、切片、覆盖、样例、报告与门禁。
-- CLI：上述流程的必要入口与机器可读结果。
+## 6. 运行输入与非阻塞边界
 
-Reuse：
-当前没有已验证可复用的项目实现。
-已有文档属于设计依据；第三方库复用另行检查兼容证据。
+首个真实业务域、数据规模/格式/权限、原始实际 traces、
+固定模型服务/协议/容量/默认值、凭据/出域、
+新响应评分来源/校准、业务阈值/预算仍需运行前提供并核验。
+这些缺失不妨碍设计表达 blocked/unknown/inconclusive，
+也不允许用假数据或默认阈值代替真实质量依据。
 
-Defer：
-- dataset-builder 的自动生成、独立求解与生成质检流水线。
-- 完整人工队列、审定 UI 及多人审批平台。
-- 在线系统调用与实时追踪集成。
-- 新增模型裁判、视觉映射、Oracle 与高级诊断。
-- Web 应用、通用 DAG、远端对象存储和大规模并行调度。
+Windows NTFS 锁/Job Object、HTTP 未决、依赖版本、安装包及性能
+均需实施测试。当前没有代码/模型调用/应用验收证据；
+精确说明见各交接。没有需要用户现在选择的阻塞设计分歧。
 
-边界：
-- C2 通过真实本地存储和标准文件导入验收。
-- 评分替身仅验证协议，不作为真实质量判断。
-- 使用合成材料展示时明确标注演示身份。
-- 缺少实际上下文、审定主张或规则时，不补造对应分数。
-- 小样本可以展示描述性结果；正式门禁仍需满足
-  预设样本、有效覆盖和统计条件。
-- 被延后的完整模块不作为必需依赖偷渡进入实现范围；
-  上述必要契约和最小读写能力仍需确认并实现。
+## 7. 交接与本轮检查
 
-必要设计集合：
-三份项目级设计，以及上述 Implement 模块在 C2 范围内的
-公开契约、关键失败与恢复流程、CLI 和集成验收。
-提供方契约先于消费者内部设计确认。
-
-推进顺序：
-Artifact Store → 最小审定记录与数据契约 → Adapter 运行契约
-→ Mapper / Evaluator → Planner / Runner → Reporting
-→ 集成流程、需求映射与交接。
-
-当前状态：
-Ready for OpenSpec；C2 所需业务模块、CLI、端到端集成和需求验收映射已确认，
-内容就绪检查通过，当前交接为 [C2-H002](handoffs/c2-r002.md) / Current。
-就绪仅限交接声明范围，不表示应用实现、测试或业务发布通过。
-
-[C2：CLI 契约与离线评测集成](slices/c2-offline-evaluation.md)
-已确认，文档修订 r004，设计覆盖 Complete，仅限声明范围。
-CLI、集成及验收正文第 1–6 节保持 r001，第 7 节及基线摘要为 r004。
-该文档固定 CLI 命令、输入输出、退出码、集成及计划验收；
-不表示应用已实现或验收已执行。
-替身仅证明其接口范围，不能作为生产集成完成的证据。
-
-## 6. 待决策与边界
-
-以下问题在相关设计单元或候选选择时确认：
-- 首个业务域、源文件类型、数据规模及权限环境。
-- 首个被测系统及接入能力。
-- 本地文件之外是否确需 SQLite 或对象存储。
-- 模型服务、裁判版本、人工校准样本与调用预算。
-- 业务指标阈值、最低有效覆盖与门禁策略。
-- 真实原格式提取器/模型 provider 的依赖、许可、目标服务协议与样例验收。
-
-Builder 与现有 Registry/Review 的工程兼容边界已在 C1 模块包确定；
-具体领域数据/阈值仍是运行输入。缺失时 blocked/unknown，不用通用假值代替。
-
-工程目录、公开导入边界与依赖检查责任已由
-[目录设计](01-directory-layout.md)确认；具体工具版本在首次实现时锁定。
-
-上述问题不妨碍规划评审；若某项阻塞具体设计，
-在该设计单元中明确阻塞点及受影响范围。
-
-## 7. 交接与验证记录
-
-- 当前 C1 交接：[C1-H001](handoffs/c1-r001.md)，修订 r001，包 r021，Current。
-- 当前 C2 交接：[C2-H002](handoffs/c2-r002.md)，修订 r002，包 r021，Current。
-- 原 [C2-H001](handoffs/c2-r001.md)为 Superseded，保留原批准内容并指向新快照。
-- C1/C2 均为 Ready for OpenSpec；Diagnostics 仍 Pending，不属于两个交接范围。
-- 当前没有绑定的 OpenSpec 消费方；本次不创建提案或应用代码。
-- C1 需求映射 D01–D26 与 G01–G32 已完成设计；C2 R01–R32/E01–E24 保持原修订。
-- 本轮只新增 C1 内容及共享导航；C2 模块/CLI/行为/验收基线不变。
-  C2 切片进度与交接同步刷新为 C2-H002，业务单元不失效。
-- 下一步可分别调用交接中的标准 $openspec-propose 提示词；实际实施另行调用 apply。
-- 所有验收均为计划，无已执行应用/模型/人工质量证据。
-- 后续公开契约或需求变更须按消费影响重新审阅并更新对应交接状态。
+- Current：[C1-H002](handoffs/c1-r002.md)、[C2-H003](handoffs/c2-r003.md)、[C3-H001](handoffs/c3-r001.md)。
+- Superseded：C1-H001、C2-H001/H002；旧正文保留，后继可追溯。
+- C1/C2 业务与验证单元不变，刷新仅为共享文档/导航确切修订；
+  C3 扩展 profile 与它们的实施范围隔离。
+- C1 D01–D26/G01–G32、C2 R01–R32/E01–E24、C3 I01–I24/T01–T32 均为计划验证。
+- 无绑定 OpenSpec 消费方；可由用户使用对应交接的标准提示词，
+  本次没有调用 OpenSpec、提交 Git 或编写应用。
+- 交付前核对内容回读、相对链接/锚点、修订、完整数量及依赖方向；
+  这些文档检查不冒充应用验收。
+- 后续变更按影响使相关交接 Needs Review，不因包修订增加自动失效无关候选。
 
 ## 8. 修订记录
 
@@ -352,3 +238,4 @@ Builder 与现有 Registry/Review 的工程兼容边界已在 C1 模块包确定
 | r019 | 2026-11-09 | 确认 C2 需求—设计—验收映射 r001，同步切片进度 | C2 仍为 Design pending，待就绪审查与交接；切片文档 r002，仅第 7 节状态更新；业务模块修订不变；无消费者或交接需要失效 |
 | r020 | 2026-11-09 | 确认 C2 内容就绪检查和交接 C2-H001，清理过期进度说明 | C2 为 Ready for OpenSpec；交接 Current；仅进度及交接基线更新，业务单元与契约修订保持原值；C1 和延期模块仍 Pending；无已存在消费者或交接需要失效 |
 | r021 | 2026-11-10 | 按用户委托完成 C1 生成模块主契约、五份主题、CLI/集成、D01–D26/G01–G32 与交接 C1-H001 | Builder Confirmed/Complete；C1 Ready for OpenSpec；C2 业务/验证单元保持原修订，刷新 C2-H002 Current、原 C2-H001 Superseded；Diagnostics 仍 Pending；无已绑定 OpenSpec 消费方 |
+| r022 | 2026-11-10 | 按委托完成 Diagnostics 五文件、四提供方独立扩展、C3 切片/I01–I24/T01–T32 与 C3-H001；修复历史导航 | Diagnostics Confirmed/Complete；C3 Ready for OpenSpec；C1/C2 核心与验收不变，刷新 C1-H002/C2-H003 Current；旧交接 Superseded；无 OpenSpec 消费方 |

@@ -2,12 +2,15 @@
 
 - 模块 ID：adapters
 - 文档状态：Confirmed
-- 文档内容修订：r002
+- 文档内容修订：r003
 - 修订边界：本次仅进度摘要更新；业务单元及公开契约保持各自既有修订。
 - 概述状态：Confirmed / r001
 - 详设覆盖：Complete
 - 声明范围：C2 标准运行表示、文本链路产物及 JSONL 导入。
 - 在线执行、阶段重放、Oracle 和厂商 SDK：后续范围。
+
+本 README 正文继续限定 C2；C3 新增的[受控文本生成与诊断阶段观察](diagnostic-extension.md)
+为独立 Confirmed / Complete / r001 设计，不改变下述 C2 契约或实施范围。
 
 ## 1. 职责与边界
 
@@ -814,7 +817,7 @@ put_blob、open_verified 及必要的源资产读取接口。
 
 ## 5. 设计进度与后续边界
 
-进度摘要：Confirmed / r002（包 r020）；业务单元修订仍按下表记录。
+进度摘要：Confirmed / r003（包 r022）；业务单元修订仍按下表记录。
 
 | 设计单元 | 审阅状态 | 内容修订 | 位置 |
 |---|---|---|---|
@@ -824,10 +827,13 @@ put_blob、open_verified 及必要的源资产读取接口。
 | 安全与实现安排 | Confirmed | r001 | [第 3 节](#3-安全与实现安排) |
 | 验证计划 | Confirmed | r001 | [第 4 节](#4-验证计划) |
 
+C3 扩展：[受控文本生成与诊断阶段观察](diagnostic-extension.md)，Confirmed / Complete / r001；
+与本表的 C2 单元分开，不作为 C2 隐藏依赖。
+
 Complete 仅表示声明的 C2 本地导入范围设计完成。
 应用实现和验收尚未执行。
 C2 的当前就绪状态见[索引](../../index.md#5-候选推进范围)，
-确切实现基线见[交接 C2-H001](../../handoffs/c2-r001.md)。
+确切实现基线见[交接 C2-H003](../../handoffs/c2-r003.md)。
 
 在线 run、retrieve_only、generate_with_context、
 实时采集、阶段重放及复杂事件日志重建继续留在后续范围。

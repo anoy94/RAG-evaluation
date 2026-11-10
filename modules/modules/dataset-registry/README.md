@@ -2,7 +2,7 @@
 
 - 模块 ID：dataset-registry
 - 文档状态：Confirmed
-- 文档内容修订：r003
+- 文档内容修订：r004
 - 修订边界：本次仅进度摘要更新；业务单元及公开契约保持各自既有修订。
 - 概述状态：Confirmed / r001
 - 详设覆盖：Complete
@@ -1251,7 +1251,7 @@ Registry 只保存允许保留的状态和复现限制。
 
 ## 5. 依赖与设计进度
 
-进度摘要：Confirmed / r003（包 r020）；业务单元修订仍按下表记录。
+进度摘要：Confirmed / r004（包 r022）；业务单元修订仍按下表记录。
 
 允许的业务依赖：
 - [Artifact Store / Contracts r002](../artifact-store/README.md#contracts)。
@@ -1289,7 +1289,7 @@ Evaluator、Runner 和 Reporting 使用。
 Complete 仅覆盖本文件声明的 C2 范围。
 应用实现与验收尚未执行。
 C2 的当前就绪状态见[索引](../../index.md#5-候选推进范围)，
-确切实现基线见[交接 C2-H001](../../handoffs/c2-r001.md)。
+确切实现基线见[交接 C2-H003](../../handoffs/c2-r003.md)。
 
 公开接口、数据含义、依赖方向、权限、持久化、
 状态机和验收行为变化需确认。

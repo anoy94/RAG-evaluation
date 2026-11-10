@@ -2,12 +2,13 @@
 
 - 设计标识：rag-evaluation-v2。
 - 审阅状态：Confirmed。
-- 内容修订：r003。
-- 单元修订：C2 需求、来源与验证计划 r001；C2 原进度/基线 r002；C2 当前交接进度 r003；C1 第 6–7 节 r001；共享导航 r003。
-- 映射范围：C2 离线评测与 C1 数据集生成；各候选修订独立记录。
+- 内容修订：r004。
+- 单元修订：C2 R01–R32/验证 r001；C1 第 6 节 D01–D26/r001；第 7 节进度 r002；C3 第 8–9 节/r001；共享交接导航 r004。
+- 映射范围：C2 离线评测、C1 数据集生成与 C3 Diagnostics；各候选修订独立记录。
 - 映射覆盖：Complete，仅指各候选已声明范围。
-- C1 候选就绪状态：Ready for OpenSpec；当前交接 C1-H001。
-- C2 候选就绪状态：Ready for OpenSpec；当前交接为 C2-H002。
+- C1 候选就绪状态：Ready for OpenSpec；当前交接 C1-H002。
+- C2 候选就绪状态：Ready for OpenSpec；当前交接为 C2-H003。
+- C3 候选就绪状态：Ready for OpenSpec；当前交接 C3-H001。
 - 验证执行状态：尚未实现和执行；本文件只确认计划对应关系。
 
 ## 1. 范围与来源
@@ -52,7 +53,7 @@ C1 的生成侧映射见第 6–7 节；不扩展本节 C2 的需求范围。
 [C2 CLI 与离线评测集成](slices/c2-offline-evaluation.md)
 第 1–6 节为 r001，第 7 节及基线摘要为 r004。
 本节引用实现设计与契约修订；文档进度修订以
-[交接 C2-H002](handoffs/c2-r002.md)列出的确切基线为准。
+[交接 C2-H003](handoffs/c2-r003.md)列出的确切基线为准。
 下表 E01–E24 引用该文档第 6 节的计划场景。
 模块验证计划按实际场景名称引用，不伪造已存在的测试文件或结果。
 
@@ -131,8 +132,8 @@ C1 的生成侧映射见第 6–7 节；不扩展本节 C2 的需求范围。
 验收中发现公开契约或需求冲突时返回设计审阅，
 不能只修改预期值以适配实现。
 
-C2 内容就绪检查通过；[交接 C2-H002](handoffs/c2-r002.md)
-为 Current，绑定包 r021。C2 为 Ready for OpenSpec。
+C2 内容就绪检查通过；[交接 C2-H003](handoffs/c2-r003.md)
+为 Current，绑定包 r022。C2 为 Ready for OpenSpec。
 R01–R32 及计划验证保持 r001；没有新增已执行证据。
 当前无 OpenSpec 消费方；本次不生成 OpenSpec 变更或应用代码。
 
@@ -179,9 +180,9 @@ C1 从已审定材料整理子集扩展至生成侧模块包，
 
 ## 7. C1 就绪、限制和 C2 影响评估
 
-C1 必需设计：Builder 六份模块文件 r001、C1 切片 r001、
-本文件第 6–7 节 r001，以及现有 Store/Review/Registry 契约。
-当前无阻塞工程决策，交接 [C1-H001](handoffs/c1-r001.md)为 Current，
+C1 必需设计：Builder 六份模块文件 r001、C1 切片第 1–6 节 r001、文档 r002，
+本文件第 6 节 r001、第 7 节进度 r002，以及现有 Store/Review/Registry 契约。
+当前无阻塞工程决策，交接 [C1-H002](handoffs/c1-r002.md)为 Current，
 C1 为 Ready for OpenSpec。真实数据、模型接入和人工质量尚未验证。
 
 C1 全生成设计不等于所有原格式 parser 已集成，
@@ -189,13 +190,65 @@ C1 全生成设计不等于所有原格式 parser 已集成，
 未支持输入/发布 profile 明确 blocked，保留候选和缺口；
 不能在兼容报告中标成已完成。
 
-本文件 r003 新增 C1 映射及导航更新；
-C2 的 R01–R32、来源、契约引用、延期和验收计划维持原修订。
-C2 业务与验证部分仍有效；无关 C1 的 Pending 摘要由新映射替换。
-为保持交接文件的确切文档修订一致，刷新为 C2-H002，原 C2-H001 为 Superseded。
-该刷新只同步引用与进度，不改变 C2 业务契约或就绪结论。
-此处是明确的影响评估，不将未检查的代码称为兼容。
+本文件 r004 新增 C3 第 8–9 节，并同步 C1/C2 导航。
+C1 D01–D26/G01–G32、C2 R01–R32/E01–E24 的业务/验收单元不变。
+刷新为 C1-H002/C2-H003；C1-H001、C2-H001/H002 为 Superseded。
+各提供方只新增独立 C3 profile/导航，C1/C2 不消费这些扩展。
+就绪保持有效，但不能把未检查代码或当前不存在的实现称为兼容。
 
 本轮没有已执行应用验收、真实模型或人工业务正确性证据。
 后续提案应把 D01–D26 与 G01–G32 转成可执行验收任务，
 并区分本地重放、真实 HTTP 接入、真实来源/人工三个保证层级。
+
+## 8. C3 Diagnostics 需求映射
+
+本节修订 r001；来源为 v2 §7–9、12–14、16–18 和用户本轮授权。
+实现范围由 [C3 切片](slices/c3-diagnostics.md)限定。
+I01–I24 为工程追踪 ID；T01–T32 均为该切片第 6 节的计划案例。
+
+| Candidate | Requirement | Primary Design Owner | Interface/Flow | Verification | Review State |
+|---|---|---|---|---|---|
+| C3 / I01 | 诊断链、公开所有权及禁止反向依赖；§13.1 | Diagnostics | README C1–C4/C9，Finding | T01、T02、T05 | Confirmed |
+| C3 / I02 | 症状/测量错误/系统失败/缺记录分开；§8、12 | Diagnostics | observations O01–O03/O09 | T03、T04 | Confirmed |
+| C3 / I03 | 全预期母集与实例/版本绑定；§7、12 | Diagnostics | ObservationBinding、source_set、association | T03、T05、T22 | Confirmed |
+| C3 / I04 | parsing/chunk/index/transform 真实观测；§9.1–9.4 | Adapters | diagnostic-extension A4 | T06、T07、T09 | Confirmed |
+| C3 / I05 | 严格否定、字面/语义分开；§5、8、13.1 | Evidence Mapper | diagnostic-stages M1–M3、核心 C8 | T04、T06、T09 | Confirmed |
+| C3 / I06 | 中间边界和并行/旁路/缺失链路；§7、13.1 | Diagnostics | observations 第 2 节/O05–O08 | T05、T07、T08 | Confirmed |
+| C3 / I07 | partial gold/替代来源/unjudged；§5、13.1 | Diagnostics | O03、充分组反证及范围 | T04、T09、T10 | Confirmed |
+| C3 / I08 | 全类别竞争假设与受限排序；§13.1 | Diagnostics | README C4、O01–O13 | T08、T11、T20 | Confirmed |
+| C3 / I09 | 失败/通过/随机渠道和固定预算；§13.2 | Diagnostics | Selection、interventions 第 1 节 | T12、T18、T25 | Confirmed |
+| C3 / I10 | Oracle 审定、实际配置、权限/工具资格；§13.2 | Diagnostics | EligibilityReport、interventions 第 2 节 | T13、T14、T15 | Confirmed |
+| C3 / I11 | 源证据物化、固定因素与容量；§13.2 | Diagnostics | Treatment/InvariantManifest | T15、T16、T17 | Confirmed |
+| C3 / I12 | 固定实际请求及具体文本生成协议；§7、13.2 | Adapters | FrozenSpec、GenerationInvocation、A1–A3 | T13、T16、T17、T19 | Confirmed |
+| C3 / I13 | 配对重复、AB顺序与独立执行；§12.3、13.3 | Runner | diagnostic-experiments X1/第 1 节 | T18、T21、T25 | Confirmed |
+| C3 / I14 | 独立预算/调用意图/取消/未决恢复；§12.3 | Runner | X2、第 1–2 节、预算账本/outbox | T23、T24、T25、T28 | Confirmed |
+| C3 / I15 | 同口径新响应评分与真实 Review target；§11–13 | Runner | X3、C2 prepare/execution、Evaluator 既有契约 | T22、T26 | Confirmed |
+| C3 / I16 | 完整外部试验导入/协议核验；§13.2 | Diagnostics | TrialEvidenceEnvelope、protocol_validity | T17、T22、T30 | Confirmed |
+| C3 / I17 | 四种转移和 unknown 的受限结论；§13.3 | Diagnostics | interpretation 第 1–2 节 | T20、T21 | Confirmed |
+| C3 / I18 | 重复单位、条件分母、不外推根因概率；§13.3、14.2 | Diagnostics | interpretation 第 3 节 | T12、T18、T21 | Confirmed |
+| C3 / I19 | 其他干预可证伪/固定变化项；§13.4 | Diagnostics | interventions 第 5 节及 unsupported 执行 | T19、T20 | Confirmed |
+| C3 / I20 | 可审计报告/范围/限制/普通门禁隔离；§14.3 | Reporting | diagnostic-reporting P1–P2 | T21、T26、T29、T30 | Confirmed |
+| C3 / I21 | 当前授权、出域、敏感隔离；§16.4 | Runner | 发送前重核验、Diagnostics operations 第 3 节 | T14、T27、T29 | Confirmed |
+| C3 / I22 | 不可变产物/复核建议与新 gold 版本；§13、15–16 | Diagnostics | operations 第 2/4 节 | T26、T28、T31 | Confirmed |
+| C3 / I23 | CLI 实际副作用/退出码/可恢复入口；§17–18 | CLI | C3 切片第 2–3 节 | T01、T23–T30 | Confirmed |
+| C3 / I24 | 夹具/真实接缝、设计与效果证据分离；§18 | CLI | C3 切片第 4–6 节、交接验证计划 | T02、T30、T32 | Confirmed |
+
+## 9. C3 就绪与跨候选影响
+
+必需单元：Diagnostics 五文件、四提供方扩展、C3 切片、
+本文件第 8–9 节，均 Confirmed/r001；
+核心依赖与精确文档修订见 [C3-H001](handoffs/c3-r001.md)。
+设计充分性审查通过；C3 Ready for OpenSpec，只覆盖声明的离线诊断、
+严格单次文本生成 Oracle、外部导入审计和描述报告。
+
+C1/C2 的数据/评分/普通报告/门禁口径与依赖不变；
+新增四扩展是独立 profile，不自动出现在原构造入口中。
+八模块 README 仅同步导航/进度，提供方既有核心单元未修改。
+C1-H002、C2-H003、C3-H001 为 Current；旧快照保留正文并标 Superseded。
+项目级架构/目录/横切规则正文和修订不变；没有新增依赖边。
+
+I01–I24/T01–T32 是验收计划，没有已执行应用/真实服务/人工准确性证据。
+上线前需要真实可重放记录、充分证据及其审定、授权/出域、固定模型服务、
+预算和新响应评分来源；缺少时按 blocked/unknown 表达。
+诊断 LLM、概率校准、通用回放和自动修复仍为延期，
+不以本模块“Complete”宣称整个 v2 的所有远期能力均已设计或实现。
