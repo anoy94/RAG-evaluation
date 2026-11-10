@@ -2,8 +2,8 @@
 
 - 候选：C2。
 - 审阅状态：Confirmed。
-- 内容修订：r003。
-- 单元修订：第 1–6 节 r001；第 7 节及基线摘要 r003。
+- 内容修订：r004。
+- 单元修订：第 1–6 节 r001；第 7 节及基线摘要 r004。
 - 设计覆盖：Complete，仅限本文件声明范围。
 - 候选就绪状态：Ready for OpenSpec。
 - 运行边界：Windows、本地 NTFS、Python 3.11+、单机 CLI。
@@ -34,7 +34,7 @@
 | [reporting](../modules/reporting/README.md#contracts) | r002 | C1–C12/r001 分析，C13–C18/r002 报告及门禁 |
 
 表中修订标识业务设计与契约；文档的进度更新不改变这些基线。
-文档修订及各单元修订以[交接 C2-H001](../handoffs/c2-r001.md)为准。
+文档修订及各单元修订以[交接 C2-H002](../handoffs/c2-r002.md)为准。
 
 Implement：
 上述模块的已确认 C2 范围，以及本文件定义的 CLI 装配和命令行为。
@@ -379,9 +379,10 @@ E09 的 pass 仅验证声明测试基准和策略下的引擎行为；
 
 本文件第 1–6 节的 CLI、集成及验收设计保持 Confirmed / r001。
 [C2 需求—设计—验收映射](../99-requirement-traceability.md)
-已确认，映射单元 r001、文档 r002；本节状态同步为 r003。
-C2 内容就绪检查通过；[交接 C2-H001](../handoffs/c2-r001.md)
-为 Current，绑定包 r020。候选为 Ready for OpenSpec。
+已确认，C2 映射单元 r001、文档 r003；本节及基线摘要同步为 r004。
+C2 内容就绪检查通过；[交接 C2-H002](../handoffs/c2-r002.md)
+为 Current，绑定包 r021。候选为 Ready for OpenSpec。
+本次仅刷新共享导航修订；CLI、集成与 E01–E24 不变，C1 不加入本切片。
 该状态仅表示可以进入 OpenSpec 提案，不表示实现、验收或业务发布通过。
 
 当前没有应用实现、执行过的验收记录或 OpenSpec 消费方。

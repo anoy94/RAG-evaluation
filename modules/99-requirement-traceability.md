@@ -2,11 +2,12 @@
 
 - 设计标识：rag-evaluation-v2。
 - 审阅状态：Confirmed。
-- 内容修订：r002。
-- 单元修订：需求映射、来源与验证计划 r001；进度及基线摘要 r002。
-- 映射范围：C2 已确认的离线评测候选。
-- 映射覆盖：Complete，仅指上述范围。
-- C2 候选就绪状态：Ready for OpenSpec；当前交接为 C2-H001。
+- 内容修订：r003。
+- 单元修订：C2 需求、来源与验证计划 r001；C2 原进度/基线 r002；C2 当前交接进度 r003；C1 第 6–7 节 r001；共享导航 r003。
+- 映射范围：C2 离线评测与 C1 数据集生成；各候选修订独立记录。
+- 映射覆盖：Complete，仅指各候选已声明范围。
+- C1 候选就绪状态：Ready for OpenSpec；当前交接 C1-H001。
+- C2 候选就绪状态：Ready for OpenSpec；当前交接为 C2-H002。
 - 验证执行状态：尚未实现和执行；本文件只确认计划对应关系。
 
 ## 1. 范围与来源
@@ -26,7 +27,7 @@ e7427dd050fcef911a12a709e4fc5cf8ebd103ed631f17cf4bed52e71eb7f425。
 Confirmed 表示映射及对应设计已确认，
 不表示实现、测试或真实业务验收通过。
 本文件不将 C2 声称为完整 v2/P0 交付。
-C1 的需求映射仍为 Pending，不创建推测性完成记录。
+C1 的生成侧映射见第 6–7 节；不扩展本节 C2 的需求范围。
 
 ## 2. 消费的设计基线
 
@@ -49,9 +50,9 @@ C1 的需求映射仍为 Pending，不创建推测性完成记录。
 
 集成及验收：
 [C2 CLI 与离线评测集成](slices/c2-offline-evaluation.md)
-第 1–6 节为 r001，第 7 节及基线摘要为 r003。
+第 1–6 节为 r001，第 7 节及基线摘要为 r004。
 本节引用实现设计与契约修订；文档进度修订以
-[交接 C2-H001](handoffs/c2-r001.md)列出的确切基线为准。
+[交接 C2-H002](handoffs/c2-r002.md)列出的确切基线为准。
 下表 E01–E24 引用该文档第 6 节的计划场景。
 模块验证计划按实际场景名称引用，不伪造已存在的测试文件或结果。
 
@@ -130,7 +131,71 @@ C1 的需求映射仍为 Pending，不创建推测性完成记录。
 验收中发现公开契约或需求冲突时返回设计审阅，
 不能只修改预期值以适配实现。
 
-C2 内容就绪检查通过；[交接 C2-H001](handoffs/c2-r001.md)
-为 Current，绑定包 r020。C2 为 Ready for OpenSpec。
+C2 内容就绪检查通过；[交接 C2-H002](handoffs/c2-r002.md)
+为 Current，绑定包 r021。C2 为 Ready for OpenSpec。
 R01–R32 及计划验证保持 r001；没有新增已执行证据。
 当前无 OpenSpec 消费方；本次不生成 OpenSpec 变更或应用代码。
+
+## 6. C1 数据集生成需求映射
+
+本节内容修订 r001，依据 2026-11-10 用户授权代理连续完成设计。
+C1 从已审定材料整理子集扩展至生成侧模块包，
+范围及边界见 [C1 切片](slices/c1-dataset-generation.md)。
+来源为 v2 第 4–6、10–11、16–18 节与生成详设第 1–18 节。
+以下 G01–G32 均引用 C1 切片第 6 节；全部是计划证据，尚未执行。
+
+| Candidate | Requirement | Primary Design Owner | Interface/Flow | Verification | Review State |
+|---|---|---|---|---|---|
+| C1 / D01 | 源身份、权限、revision 与全清单冻结；生成详设 §1、3、15 | Builder / evidence | SourceManifest → SourceBundle → Registry Snapshot 投影 | G02、G03、G26；字节/身份/数量闭合 | Confirmed |
+| C1 / D02 | 保留提取 partial、独立参考与原文回查；§3 | Builder / evidence | ExtractionResult、ReferenceBundle、原文与参考分离 | G03、G06；缺页/坏提取不静默剔除 | Confirmed |
+| C1 / D03 | 原子事实完整限定，零/未披露分开；§4、10 | Builder / evidence | FactCandidate、qualifiers、quantity/missing_kind | G04、G05；同值不同年度与单位 | Confirmed |
+| C1 / D04 | 文本、表格和视觉定位稳定；§4、10 | Builder / evidence | text_quote、visual descriptor 与冻结渲染映射 | G05、G06；无 bbox 审查只声明 asset/page | Confirmed |
+| C1 / D05 | 蓝图先于问法，目标/必要答点/前提分离；§5、8 | Builder / planning | Blueprint、target slots、推导 DAG | G02、G07；差额题不强求复述全部前提 | Confirmed |
+| C1 / D06 | 真多跳、替代路径和充分组不混淆；§5 | Builder / planning | necessary fact roles、support alternatives、partial 范围 | G07、G13；直接差额与两跳分别处理 | Confirmed |
+| C1 / D07 | 配额可行、有限缺口调度与来源多样性；§6 | Builder / planning | ScenarioPolicy、SelectionReceipt、硬/软与独立组数 | G09、G10、G19；缺口不可填假标签 | Confirmed |
+| C1 / D08 | 先分组切分，再扩写变体；§6、12 | Builder / planning | ProvenanceGraph、SplitAssignment、关联合并 | G08、G10、G30；不拆大组制造独立性 | Confirmed |
+| C1 / D09 | 精确、语义及蓝图去重，保留有意对照；§12 | Builder / planning | DedupPolicy、equivalent/distinct/unknown | G04、G08、G27；改条件后重新检查 | Confirmed |
+| C1 / D10 | 合成约束对齐与多轮输入无标签泄漏；§7 | Builder / synthesis | QuestionCandidate、白名单 message views | G11、G26；实际输入可追 | Confirmed |
+| C1 / D11 | 独立求解隔离生成答案，共模限制明确；§8、11 | Builder / synthesis | SolverViewBuilder、Solution、模型谱系 | G11、G12；replay 不当独立真值 | Confirmed |
+| C1 / D12 | 数值白名单、单位、舍入与误差传播；§8 | Builder / synthesis | derivation_decimal_v1 与 Registry 无损投影 | G02、G14、G15；除零/乘除不冒充 C2 支持 | Confirmed |
+| C1 / D13 | 可答/不可答/歧义/冲突/权限分别表达；§9 | Builder / synthesis | AnswerabilityEvidence、授权搜索范围和 negative_basis | G13、G26；search_no_hit 不是负例证明 | Confirmed |
+| C1 / D14 | 自动质检适用性、fail/unknown/error 分开；§11、18 | Builder / quality | ValidationResult、固定必需检查与状态派生 | G16、G32；不适用不计通过 | Confirmed |
+| C1 / D15 | 有限修复形成 revision，依赖按影响失效；§11、14 | Builder / execution | change requests、DependencyImpactManifest、原尝试账本 | G22、G27；不覆盖或重新计为一次通过 | Confirmed |
+| C1 / D16 | 逐题原文人工核心，不以自动/抽检代替；§13 | Dataset Registry | C10 human_core_v1；Builder 真实 target 工作包 | G17–G19；13 必需项及范围核验 | Confirmed |
+| C1 / D17 | 自动扩展有逐题可消费验证，保留来源等级；§11、13、15 | Builder / quality | automated ReviewRecord 投影 → Registry synthetic_extension_v1 | G16–G18；无自动 human 签核 | Confirmed |
+| C1 / D18 | 定向/随机抽样及质量批次处置；§13 | Builder / quality | SamplingReviewPlan、QualityBatchPolicy、slice hold | G17、G20；不只替换发现的坏题 | Confirmed |
+| C1 / D19 | 作业/候选/发布状态分开、完整计数；§14、18 | Builder / execution | BuildJob、TaskOutcome、BuildSnapshot | G16、G24、G32；全 reject 不等于程序失败 | Confirmed |
+| C1 / D20 | 预算、调用意图、外部未决及恢复；§14 | Builder / execution | CallIntent、预算账本、reconcile_invocation | G21–G25；不重置预算/静默重发 | Confirmed |
+| C1 / D21 | 当前授权、出域与安全日志；§1、9、14 | Builder / security | 逐次 Store 授权、最小模型视图、可信 provider 注册 | G11、G26、G29；无凭据/受限答案泄露 | Confirmed |
+| C1 / D22 | 发布投影、全引用、等级与配额检查；§15、18 | Dataset Registry | import_dataset → build_review_target → prepare_release → publish | G02、G18、G19、G28；正式版本唯一权威 | Confirmed |
+| C1 / D23 | 版本更正、替代证据、撤回与影响清单；§15 | Builder / quality | 新 BuildRequest/Projection → Registry lifecycle | G27、G28、G30；不改旧 gold/实验 | Confirmed |
+| C1 / D24 | 标准数据与 C2 直接对齐，公开能力缺口；§16、18 | Builder / publication | Registry DTO/原生 JSONL，C2 文本/数值兼容报告 | G15、G31；完整成员读取与无 gold 输入投影 | Confirmed |
+| C1 / D25 | CLI/文件审定和显式安全导出；§13–16 | CLI | C1 切片第 2–4 节命令与结果、受控工作包 | G01、G18、G29、G32；真实退出/单 JSON | Confirmed |
+| C1 / D26 | 产能、未知、成本与验证限制可审计；§18 | Builder / summary | 分来源、候选、tier、stage、组与调用状态的摘要 | G09、G17、G25、G32；分母/未知费用明确 | Confirmed |
+
+正式 SourceArtifact/原始字节归 Store；ReviewRecord 归 Review；
+正式 Snapshot/Evidence/TestCase/DatasetVersion 归 Registry。
+上表 Builder 工作所有权不转移这些正式记录的权威。
+
+## 7. C1 就绪、限制和 C2 影响评估
+
+C1 必需设计：Builder 六份模块文件 r001、C1 切片 r001、
+本文件第 6–7 节 r001，以及现有 Store/Review/Registry 契约。
+当前无阻塞工程决策，交接 [C1-H001](handoffs/c1-r001.md)为 Current，
+C1 为 Ready for OpenSpec。真实数据、模型接入和人工质量尚未验证。
+
+C1 全生成设计不等于所有原格式 parser 已集成，
+不等于乘除/视觉定位已在 C2 实现评分。
+未支持输入/发布 profile 明确 blocked，保留候选和缺口；
+不能在兼容报告中标成已完成。
+
+本文件 r003 新增 C1 映射及导航更新；
+C2 的 R01–R32、来源、契约引用、延期和验收计划维持原修订。
+C2 业务与验证部分仍有效；无关 C1 的 Pending 摘要由新映射替换。
+为保持交接文件的确切文档修订一致，刷新为 C2-H002，原 C2-H001 为 Superseded。
+该刷新只同步引用与进度，不改变 C2 业务契约或就绪结论。
+此处是明确的影响评估，不将未检查的代码称为兼容。
+
+本轮没有已执行应用验收、真实模型或人工业务正确性证据。
+后续提案应把 D01–D26 与 G01–G32 转成可执行验收任务，
+并区分本地重放、真实 HTTP 接入、真实来源/人工三个保证层级。
