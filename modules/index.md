@@ -4,9 +4,9 @@
 - 项目根目录：C:\Users\32943\Desktop\RAG-evaluation
 - 设计包目录：modules/
 - 模式：新建设计包
-- 设计包修订：r011
+- 设计包修订：r020
 - 本索引审阅状态：Confirmed
-- 本索引内容修订：r011
+- 本索引内容修订：r020
 
 本索引确认设计包规划。各架构文档、模块契约及详细设计的确认状态单独记录。
 
@@ -60,10 +60,14 @@ Design pending、Ready for OpenSpec、Needs Review、Superseded。
 
 | 设计单元 | 计划路径 | 审阅状态 | 内容修订 |
 |---|---|---|---|
-| 总体架构 | [00-system-architecture.md](00-system-architecture.md) | Confirmed | r001 |
-| 工程目录与依赖规则 | [01-directory-layout.md](01-directory-layout.md) | Confirmed | r001 |
-| 横切规则 | [02-cross-cutting-concerns.md](02-cross-cutting-concerns.md) | Confirmed | r001 |
-| 需求与验收映射 | [99-requirement-traceability.md](99-requirement-traceability.md) | Pending | — |
+| 总体架构 | [00-system-architecture.md](00-system-architecture.md) | Confirmed | r002 |
+| 工程目录与依赖规则 | [01-directory-layout.md](01-directory-layout.md) | Confirmed | r002 |
+| 横切规则 | [02-cross-cutting-concerns.md](02-cross-cutting-concerns.md) | Confirmed | r002 |
+| 需求与验收映射 | [99-requirement-traceability.md](99-requirement-traceability.md) | Confirmed（仅 C2） | r002 |
+
+本表为文档修订；三份项目级设计正文保持 r001，
+本次 r002 仅同步进度说明。需求映射单元保持 r001，文档为 r002。
+各实现单元及契约修订以[交接 C2-H001](handoffs/c2-r001.md)为准。
 
 总体架构先确认运行边界、模块职责、数据所有权、主要流程及依赖方向。
 目录设计随后确定逻辑模块到代码包的映射。
@@ -83,23 +87,40 @@ Design pending、Ready for OpenSpec、Needs Review、Superseded。
 | dataset-builder：候选构建与质量验证 | [modules/dataset-builder/README.md](modules/dataset-builder/README.md#contracts) | BuildConfig、BuildJob、Blueprint、候选与验证记录 | Pending / Not Started |
 | adapters：系统能力与运行接入 | [modules/adapters/README.md](modules/adapters/README.md#contracts) | 标准运行、阶段与生成产物、计量及 JSONL 导入协议 | Confirmed / Complete |
 | evidence-mapper：跨阶段证据定位 | [modules/evidence-mapper/README.md](modules/evidence-mapper/README.md#contracts) | 文本锚点、来源、联合覆盖及严格缺失判定 | Confirmed / Complete |
-| evaluators：评分行为与裁判版本 | [modules/evaluators/README.md](modules/evaluators/README.md#contracts) | MetricSpec、Judgment、Evaluator 协议 | Pending / Not Started |
-| metric-planner：依赖与适用性解析 | [modules/metric-planner/README.md](modules/metric-planner/README.md#contracts) | EvaluationPlan、依赖检查与执行任务描述 | Pending / Not Started |
+| evaluators：评分行为与裁判版本 | [modules/evaluators/README.md](modules/evaluators/README.md#contracts) | MetricSpec、Judgment、评分导入与 Evaluator 协议 | Confirmed / Complete |
+| metric-planner：依赖与适用性解析 | [modules/metric-planner/README.md](modules/metric-planner/README.md#contracts) | EvaluationPlan、依赖检查与执行任务描述 | Confirmed / Complete |
 | diagnostics：症状、假设与受控干预 | [modules/diagnostics/README.md](modules/diagnostics/README.md#contracts) | DiagnosticFinding、Intervention、Oracle 协议 | Pending / Not Started |
-| runner：实验执行、导入与恢复 | [modules/runner/README.md](modules/runner/README.md#contracts) | ExperimentManifest、实验作业与执行控制协议 | Pending / Not Started |
-| reporting：统计、报告与门禁 | [modules/reporting/README.md](modules/reporting/README.md#contracts) | ComparisonReport、GatePolicy、GateDecision | Pending / Not Started |
+| runner：实验执行、导入与恢复 | [modules/runner/README.md](modules/runner/README.md#contracts) | ExperimentManifest、实验作业与执行控制协议 | Confirmed / Complete |
+| reporting：统计、报告与门禁 | [modules/reporting/README.md](modules/reporting/README.md#contracts) | AnalysisResult、ComparisonReport、GatePolicy、GateDecision | Confirmed / Complete |
 
-artifact-store 的 C2 本地范围已确认，文档修订 r002，
+artifact-store 的 C2 本地范围已确认，文档修订 r003，
 公开契约 r002。
 review 的 C2 最小审定记录范围已确认，文档与契约修订 r001；
 完整队列和 ReviewItem 仍在后续范围。
-dataset-registry 的 C2 范围已确认，文档与公开契约修订 r002；
+dataset-registry 的 C2 范围已确认，文档 r003、公开契约 r002；
 覆盖导入、审定衔接、版本发布、读取与恢复。
-adapters 的 C2 本地导入范围已确认，文档与公开契约修订 r001；
+adapters 的 C2 本地导入范围已确认，文档 r002、公开契约 r001；
 在线执行、实时采集及 Oracle 接入仍在后续范围。
-evidence-mapper 的 C2 文本范围已确认，文档与契约修订 r001；
+evidence-mapper 的 C2 文本范围已确认，文档 r002、契约 r001；
 事实支持计分归 Evaluator，语义改写和视觉映射留在后续范围。
-其余模块内容修订为“—”。
+evaluators 的 C2 确定性评价与已有审定评分范围已确认，
+文档 r002、契约 r001；覆盖逐项指标、评分视图、审定导入、
+事实覆盖及 TaskSuccess 组合。
+在线裁判、自动主张提取、传统 IR 投影和专项评价留在后续范围。
+metric-planner 的 C2 离线计划范围已确认，文档 r002、契约 r001；
+覆盖固定观测、结果槽位、指标依赖、输入缺口和确定性计划。
+计划保存与执行归 Runner，在线计划和动态工作流留在后续范围。
+runner 的 C2 本地范围已确认，文档 r003、契约 r002；
+覆盖实验准备、评价执行、预算与失败控制、
+有限重试、显式评分复用和本地进程恢复。
+每个操作采用一个协调者和一个在途 worker；
+在线调用、多 worker 并行及分布式调度留在后续范围。
+reporting 的 C2 聚合、覆盖、配对统计、Markdown/JSON 报告、
+样例、三态门禁与本地导出范围已确认，文档 r003、契约 r002；
+C1–C12 保持 r001，新增 C13–C18 为 r002。
+自动校准、完整诊断、总体尾分位数与跨来源成本仍在后续范围。
+上述八个模块本次只同步进度摘要；业务设计、公开契约和已确认单元修订保持原值。
+review 文档与契约保持 r001；其余未设计模块内容修订为“—”。
 Complete 表示该模块声明范围的设计覆盖，不表示实现完成。
 公开字段、方法和状态转换在各自设计中确认；
 本表汇总总体架构确认的所有权。
@@ -147,7 +168,7 @@ review 不通过反向导入各业务模块来修改被审对象。
 
 用户已选定 C2 优先推进，以尽快形成可展示的离线测评结果。
 C1 及数据集自动生成后续对齐测评框架确认的契约。
-C1/C2 就绪状态均为 Design pending。
+C1 为 Design pending；C2 为 Ready for OpenSpec，当前交接 C2-H001。
 
 ### C1：可信数据版本闭环，后续候选
 
@@ -220,10 +241,15 @@ Artifact Store → 最小审定记录与数据契约 → Adapter 运行契约
 → 集成流程、需求映射与交接。
 
 当前状态：
-Design pending；模块细节、统计协议和集成验收尚未确认。
+Ready for OpenSpec；C2 所需业务模块、CLI、端到端集成和需求验收映射已确认，
+内容就绪检查通过，当前交接为 [C2-H001](handoffs/c2-r001.md) / Current。
+就绪仅限交接声明范围，不表示应用实现、测试或业务发布通过。
 
-C2 的精确设计部分与验收场景按上述顺序确认，
-对应 slices 文档尚待集成设计审阅。
+[C2：CLI 契约与离线评测集成](slices/c2-offline-evaluation.md)
+已确认，文档修订 r003，设计覆盖 Complete，仅限声明范围。
+CLI、集成及验收正文第 1–6 节保持 r001，第 7 节及基线摘要为 r003。
+该文档固定 CLI 命令、输入输出、退出码、集成及计划验收；
+不表示应用已实现或验收已执行。
 替身仅证明其接口范围，不能作为生产集成完成的证据。
 
 ## 6. 待决策与边界
@@ -244,13 +270,13 @@ C2 的精确设计部分与验收场景按上述顺序确认，
 
 ## 7. 交接与验证记录
 
-- 当前没有实现交接记录。
+- 当前交接：[C2-H001](handoffs/c2-r001.md)，交接修订 r001，包 r020，生命周期 Current。
+- C2 为 Ready for OpenSpec；C1 保持 Design pending。
 - 当前没有绑定的 OpenSpec 消费方。
-- 需求与验收映射将在 C2 必要设计确认后逐项审阅。
-- 本包记录设计及计划验收，不把计划测试表述为已执行证据。
-- 当前下一审阅单元：evaluators 的 C2 指标契约、确定规则与已有审定评分导入；
-  C2 仍为 Design pending。
-- 后续交接仅引用明确批准且仍有效的文件、标题及修订。
+- C2 需求映射单元保持 r001，文档 r002；C1 映射仍 Pending。
+- 本包记录设计及计划验收，尚无应用实现或已执行验收证据。
+- 下一步由用户调用交接中的标准 $openspec-propose 提示词；本设计流程不执行提案或实现。
+- 当前交接绑定确切文件、单元与修订；相关变更须按影响更新状态并重新审阅。
 
 ## 8. 修订记录
 
@@ -267,3 +293,12 @@ C2 的精确设计部分与验收场景按上述顺序确认，
 | r009 | 2026-11-09 | 确认 Dataset Registry 的 C2 导入、发布与恢复，公开契约推进到 r002 | dataset-registry 为 Confirmed / Complete，仅覆盖声明范围；其他模块状态不变；当前无已确认消费者或交接需要失效 |
 | r010 | 2026-11-09 | 确认 Adapters 的 C2 运行记录与 JSONL 导入设计 r001 | adapters 为 Confirmed / Complete，仅覆盖声明范围；其他模块状态不变；无已确认消费者或交接需要失效 |
 | r011 | 2026-11-09 | 确认 Evidence Mapper 的 C2 文本定位与严格缺失设计 r001 | evidence-mapper 为 Confirmed / Complete，仅覆盖声明范围；其他模块状态不变；无已确认消费者或交接需要失效 |
+| r012 | 2026-11-09 | 确认 Evaluators 的 C2 指标、确定规则、已有审定评分导入与组合评价设计 r001 | evaluators 为 Confirmed / Complete，仅覆盖声明范围；C2 仍为 Design pending；其他模块状态不变；无已确认消费者或交接需要失效 |
+| r013 | 2026-11-09 | 确认 Metric Planner 的 C2 观测、依赖解析与离线计划设计 r001 | metric-planner 为 Confirmed / Complete，仅覆盖声明范围；C2 仍为 Design pending；其他模块状态不变；无已确认消费者或交接需要失效 |
+| r014 | 2026-11-09 | 确认 Runner 的 C2 实验准备、观测绑定与单次执行设计 r001 | runner 为 In Progress / Partial；预算、重试、缓存及恢复仍待确认；C2 仍为 Design pending；无已确认消费者或交接需要失效 |
+| r015 | 2026-11-09 | 补全 Runner 的 C2 预算、失败控制、重试、评分复用与本地恢复，契约推进到 r002 | runner 为 Confirmed / Complete，仅覆盖声明范围；C2 仍为 Design pending；其他已确认模块不变；无已确认消费者或交接需要失效 |
+| r016 | 2026-11-09 | 确认 Reporting 的 C2 聚合、覆盖、缺失范围与 A/B 配对统计设计 r001 | reporting 为 In Progress / Partial；报告输出和门禁仍待确认；C2 仍为 Design pending；无已确认消费者或交接需要失效 |
+| r017 | 2026-11-09 | 补全 Reporting 的 C2 报告、样例、三态门禁与本地导出，公开契约推进到 r002 | reporting 为 Confirmed / Complete，仅覆盖声明范围；C2 仍为 Design pending；其他模块修订不变；无已确认消费者或交接需要失效 |
+| r018 | 2026-11-09 | 确认 C2 的 CLI 命令、装配、端到端集成与计划验收 r001 | C2 仍为 Design pending，需求映射与交接待确认；模块修订不变；无已确认消费者或交接需要失效 |
+| r019 | 2026-11-09 | 确认 C2 需求—设计—验收映射 r001，同步切片进度 | C2 仍为 Design pending，待就绪审查与交接；切片文档 r002，仅第 7 节状态更新；业务模块修订不变；无消费者或交接需要失效 |
+| r020 | 2026-11-09 | 确认 C2 内容就绪检查和交接 C2-H001，清理过期进度说明 | C2 为 Ready for OpenSpec；交接 Current；仅进度及交接基线更新，业务单元与契约修订保持原值；C1 和延期模块仍 Pending；无已存在消费者或交接需要失效 |
